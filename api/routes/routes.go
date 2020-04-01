@@ -7,10 +7,11 @@ import (
 )
 
 func Run() {
+	var port string = "8080"
 	e := echo.New()
 
 	e.GET("/find-xyz", doscg.FindXYZ)
 	e.GET("/find-bc", doscg.FindBC)
 	e.POST("/callback", doscg.ReceiveLineMessage)
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + port))
 }
