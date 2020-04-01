@@ -11,7 +11,6 @@ func Run() {
 
 	e.GET("/find-xyz", doscg.FindXYZ)
 	e.GET("/find-bc", doscg.FindBC)
-	e.GET("/find-direction", doscg.FindDirection)
-	e.GET("/webhook", doscg.ReceiveLineMessage)
+	e.POST("/callback", doscg.ReceiveLineMessage)
 	e.Logger.Fatal(e.Start(":8080"))
 }
