@@ -193,5 +193,7 @@ func ReceiveLineMessage(c echo.Context) error {
 		defer res.Body.Close()
 	}
 
-	return nil
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "received message",
+	})
 }
