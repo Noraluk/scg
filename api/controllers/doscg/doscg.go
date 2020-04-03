@@ -125,6 +125,8 @@ func ReceiveLineMessage(c echo.Context) error {
 		return err
 	}
 
+	log.Println(input)
+
 	client := &http.Client{
 		Timeout: time.Second * 2,
 	}
