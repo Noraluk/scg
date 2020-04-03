@@ -3,7 +3,6 @@ package doscg
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -122,18 +121,39 @@ func ReceiveLineMessage(c echo.Context) error {
 	}
 
 	client := &http.Client{
-		Timeout: time.Second * 10,
+		Timeout: time.Second * 2,
 	}
 
 	for _, event := range input.Events {
-		replyReq := ReplyMessageRequest{
-			ReplyToken: event.ReplyToken,
-			Messages: []Message{
-				{
-					Type: "text",
-					Text: "hello",
-				},
-			},
+		var replyReq ReplyMessageRequest
+		msgTime := time.Unix(0, event.TimeStamp*int64(time.Millisecond))
+
+		for {
+			if time.Now().After(msgTime.Add(10 * time.Second)) {
+				replyReq = ReplyMessageRequest{
+					ReplyToken: event.ReplyToken,
+					Messages: []Message{
+						{
+							Type: "text",
+							Text: "cannot find any answer , please ask again",
+						},
+					},
+				}
+				break
+			}
+
+			if event.Message.Text == "Hello" {
+				replyReq = ReplyMessageRequest{
+					ReplyToken: event.ReplyToken,
+					Messages: []Message{
+						{
+							Type: "text",
+							Text: "World",
+						},
+					},
+				}
+				break
+			}
 		}
 
 		b, err := json.Marshal(replyReq)
@@ -153,10 +173,6 @@ func ReceiveLineMessage(c echo.Context) error {
 			return err
 		}
 		defer res.Body.Close()
-
-		if res.StatusCode == http.StatusRequestTimeout {
-			return errors.New("line bot unavailable")
-		}
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
