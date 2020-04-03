@@ -4,12 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/labstack/echo"
@@ -131,33 +128,33 @@ func ReceiveLineMessage(c echo.Context) error {
 		Timeout: time.Second * 2,
 	}
 
-	data := url.Values{}
-	data.Set("grant_type", "client_credentials")
-	data.Add("client_id", "1654025042")
-	data.Add("client_secret", "f7e89d5ec699573e0fa5bfd68291ac72")
+	// data := url.Values{}
+	// data.Set("grant_type", "client_credentials")
+	// data.Add("client_id", "1654025042")
+	// data.Add("client_secret", "f7e89d5ec699573e0fa5bfd68291ac72")
 
-	req, err := http.NewRequest("POST", "https://api.line.me/v2/oauth/accessToken", strings.NewReader(data.Encode()))
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+	// req, err := http.NewRequest("POST", "https://api.line.me/v2/oauth/accessToken", strings.NewReader(data.Encode()))
+	// if err != nil {
+	// 	return err
+	// }
+	// req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	// req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-	res, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
+	// res, err := client.Do(req)
+	// if err != nil {
+	// 	return err
+	// }
+	// defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
+	// body, err := ioutil.ReadAll(res.Body)
+	// if err != nil {
+	// 	return err
+	// }
 
-	var token Token
-	if err := json.Unmarshal(body, &token); err != nil {
-		return err
-	}
+	// var token Token
+	// if err := json.Unmarshal(body, &token); err != nil {
+	// 	return err
+	// }
 
 	for _, event := range input.Events {
 		msgTime := time.Unix(0, event.TimeStamp*int64(time.Millisecond))
@@ -185,10 +182,10 @@ func ReceiveLineMessage(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-		req.Header.Add("Authorization", "Bearer "+token.AccessToken)
+		req.Header.Add("Authorization", "Bearer bF4wWka4PeA06qYcwaAkdjQ5mJ5dOR85tvrSFJiE7owzVs50x2AL0pAn9oSTn86izr+xIXbj/OAsIAXt/y5bRWkOs3hehGvMlIYLT2J9uVv/vC9oeZjMoQmb1QqOACuNYbl7TPMSHbaB9TT0VRcshgdB04t89/1O/w1cDnyilFU=")
 		req.Header.Add("Content-Type", "application/json")
 
-		res, err = client.Do(req)
+		res, err := client.Do(req)
 		if err != nil {
 			return err
 		}
