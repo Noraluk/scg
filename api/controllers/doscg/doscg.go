@@ -141,7 +141,7 @@ func ReceiveLineMessage(c echo.Context) error {
 			return err
 		}
 
-		req, err := http.NewRequest("GET", "https://api.line.me/v2/bot/message/reply", bytes.NewBuffer(b))
+		req, err := http.NewRequest("POST", "https://api.line.me/v2/bot/message/reply", bytes.NewBuffer(b))
 		if err != nil {
 			return err
 		}
