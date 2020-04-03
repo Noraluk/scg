@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -122,42 +121,11 @@ func ReceiveLineMessage(c echo.Context) error {
 		return err
 	}
 
-	log.Println(input)
-
 	client := &http.Client{
-		Timeout: time.Second * 2,
+		Timeout: time.Second * 10,
 	}
 
-	// data := url.Values{}
-	// data.Set("grant_type", "client_credentials")
-	// data.Add("client_id", "1654025042")
-	// data.Add("client_secret", "f7e89d5ec699573e0fa5bfd68291ac72")
-
-	// req, err := http.NewRequest("POST", "https://api.line.me/v2/oauth/accessToken", strings.NewReader(data.Encode()))
-	// if err != nil {
-	// 	return err
-	// }
-	// req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	// req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-
-	// res, err := client.Do(req)
-	// if err != nil {
-	// 	return err
-	// }
-	// defer res.Body.Close()
-
-	// body, err := ioutil.ReadAll(res.Body)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// var token Token
-	// if err := json.Unmarshal(body, &token); err != nil {
-	// 	return err
-	// }
-
 	for _, event := range input.Events {
-		msgTime := time.Unix(0, event.TimeStamp*int64(time.Millisecond))
 		replyReq := ReplyMessageRequest{
 			ReplyToken: event.ReplyToken,
 			Messages: []Message{
@@ -166,11 +134,6 @@ func ReceiveLineMessage(c echo.Context) error {
 					Text: "hello",
 				},
 			},
-		}
-
-		if time.Now().After(msgTime.Add(10 * time.Second)) {
-			log.Println("sdas")
-			return errors.New("line bot can't answer in 10 sec")
 		}
 
 		b, err := json.Marshal(replyReq)
@@ -190,6 +153,10 @@ func ReceiveLineMessage(c echo.Context) error {
 			return err
 		}
 		defer res.Body.Close()
+
+		if res.StatusCode == http.StatusRequestTimeout {
+			return errors.New("line bot unavailable")
+		}
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
