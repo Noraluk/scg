@@ -98,12 +98,6 @@ type LineMessage struct {
 	} `json:"events"`
 }
 
-type Token struct {
-	AccessToken string `json:"access_token"`
-	ExpiresIn   int    `json:"expires_in"`
-	TokenType   string `json:"token_type"`
-}
-
 type ReplyMessageRequest struct {
 	ReplyToken string    `json:"replyToken"`
 	Messages   []Message `json:"messages"`
