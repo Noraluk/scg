@@ -7,6 +7,6 @@ COPY . .
 RUN go mod download
 RUN go build -o main .
 
-EXPOSE $PORT
+ENV PORT=5000
 
 CMD [ "./main" ]
