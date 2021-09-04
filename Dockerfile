@@ -1,16 +1,12 @@
-FROM golang:1.13.4-alpine
+FROM golang:alpine
+ENV CGO_ENABLED=0
 
 WORKDIR /app
+COPY . .
 
-ENV PORT=5000
-
-COPY go.mod .
-COPY go.sum .
 RUN go mod download
+RUN go build -o main .
 
-COPY /api /app/api
-COPY main.go .
+EXPOSE $PORT
 
-RUN go build
-
-CMD ["./scg"]
+CMD [ "./main" ]
